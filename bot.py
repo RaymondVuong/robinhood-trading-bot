@@ -12,7 +12,7 @@ scheduler = BlockingScheduler()
 
 # authenticate
 rs.login(username=EMAIL,
-         password=PASSWORD,
+         password=ROBINHOOD_PASSWORD,
          expiresIn=86400,
          by_sms=True)
          
