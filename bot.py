@@ -76,7 +76,8 @@ def sell_stock(ammountInDollars, symbol):
 AMOUNT_IN_DOLLARS = 1.0
 SYMBOL = 'AMD'
 
-@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=15)
+@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=16)
+schedule.start()
 def start_bot():
     login()
     stockInfo = get_stock_data(SYMBOL)
