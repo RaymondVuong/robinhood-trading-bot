@@ -3,18 +3,19 @@ import time
 import robin_stocks as rs
 import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
+import pyotp
 
 EMAIL = environ['EMAIL']
 ROBINHOOD_PASSWORD = environ['ROBINHOOD_PASSWORD']
 ALPHA_VANTAGE_KEY = environ['ALPHA_VANTAGE_KEY']
+AUTH = environ['AUTH']
 
 scheduler = BlockingScheduler()
 
 # authenticate
-rs.login(username=EMAIL,
-         password=ROBINHOOD_PASSWORD,
-         expiresIn=86400,
-         by_sms=True)
+totp = pyotp.TOTP(AUTH).now()
+print("Current OTP:", totp)
+rs.login(EMAIL, ROBINHOOD_PASSWORD, mfa_code=totp)
          
 def get_stock_data(symbol):
     # make API  request to get stock data
@@ -70,9 +71,9 @@ def sell_stock(ammountInDollars, symbol):
     
 
 AMOUNT_IN_DOLLARS = 1.0
-SYMBOL = 'GOOG'
+SYMBOL = 'AMD'
 
-@sched.scheduled_job('cron', day_of_week='mon-fri', hour=18)
+@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=18)
 def start_bot():
     stockInfo = get_stock_data(SYMBOL)
     
@@ -82,4 +83,6 @@ def start_bot():
     if thirtyDayAvg > hunderedDatAvg:
         buy_stock(AMOUNT_IN_DOLLARS, SYMBOL)
     else: 
-        sell_stock(AMOUNT_IN_DOLLARS, SYMBOL)
+        # sell_stock(AMOUNT_IN_DOLLARS, SYMBOL)
+    rs.logout()
+
