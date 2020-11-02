@@ -12,12 +12,15 @@ AUTH = environ['AUTH']
 
 scheduler = BlockingScheduler()
 
-# authenticate
-totp = pyotp.TOTP(AUTH).now()
-print("Current OTP:", totp)
-rs.login(EMAIL, ROBINHOOD_PASSWORD, mfa_code=totp)
-         
+
+def login():
+    # authenticate
+    totp = pyotp.TOTP(AUTH).now()
+    print("Current OTP:", totp)
+    rs.login(EMAIL, ROBINHOOD_PASSWORD, mfa_code=totp)
+
 def get_stock_data(symbol):
+    
     # make API  request to get stock data
     response = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + symbol + '&apikey=' + ALPHA_VANTAGE_KEY)
     data = response.json()['Time Series (Daily)']
@@ -75,6 +78,7 @@ SYMBOL = 'AMD'
 
 @scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=18)
 def start_bot():
+    login()
     stockInfo = get_stock_data(SYMBOL)
     
     thirtyDayAvg = stockInfo[0]
@@ -83,6 +87,6 @@ def start_bot():
     if thirtyDayAvg > hunderedDatAvg:
         buy_stock(AMOUNT_IN_DOLLARS, SYMBOL)
     # else: 
-        # sell_stock(AMOUNT_IN_DOLLARS, SYMBOL)
+    #     sell_stock(AMOUNT_IN_DOLLARS, SYMBOL)
     rs.logout()
 
