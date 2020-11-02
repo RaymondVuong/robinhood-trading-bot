@@ -76,16 +76,18 @@ def sell_stock(ammountInDollars, symbol):
 AMOUNT_IN_DOLLARS = 1.0
 SYMBOL = 'AMD'
 
-@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=18)
+@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=15)
 def start_bot():
     login()
     stockInfo = get_stock_data(SYMBOL)
     
     thirtyDayAvg = stockInfo[0]
     hunderedDatAvg = stockInfo[1]
+    print(thirtyDayAvg)
+    print(hunderedDatAvg)
 
-    if thirtyDayAvg > hunderedDatAvg:
-        buy_stock(AMOUNT_IN_DOLLARS, SYMBOL)
+    # if thirtyDayAvg > hunderedDatAvg:
+    #     buy_stock(AMOUNT_IN_DOLLARS, SYMBOL)
     # else: 
     #     sell_stock(AMOUNT_IN_DOLLARS, SYMBOL)
     rs.logout()
