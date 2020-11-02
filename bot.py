@@ -82,7 +82,7 @@ def start_bot():
 
     if thirtyDayAvg > hunderedDatAvg:
         buy_stock(AMOUNT_IN_DOLLARS, SYMBOL)
-    else: 
+    # else: 
         # sell_stock(AMOUNT_IN_DOLLARS, SYMBOL)
     rs.logout()
 
